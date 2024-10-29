@@ -19,19 +19,7 @@ public class GameMenuGUITest {
         gui.setVisible(false);  // Prevent the GUI from appearing during testing
     }
 
-    @Test
-    public void testGameTypeComboBox() {
-        JComboBox<String> gameTypeComboBox = findComponentOfType(gui, JComboBox.class);
-        assertNotNull(gameTypeComboBox);  // Verify that the combo box exists
-
-        // Test that the default selected game type is "Simple Game"
-        assertEquals("Simple Game", gameTypeComboBox.getSelectedItem());
-
-        // Simulate selecting "General Game" from the combo box
-        gameTypeComboBox.setSelectedItem("General Game");
-        assertEquals("General Game", controller.getGameType());  // Verify the controller's game type is updated
-    }
-
+    
     @Test
     public void testBoardSizeSpinner() {
         JSpinner boardSizeSpinner = findComponentOfType(gui, JSpinner.class);

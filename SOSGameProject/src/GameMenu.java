@@ -8,7 +8,7 @@ public class GameMenu {
         this.boardSize = 3;
     }
 
-    // Getters and Setters for game type and board size
+    //Getters and Setters for game type and board size
     public String getGameType() {
         return gameType;
     }
@@ -29,9 +29,17 @@ public class GameMenu {
         }
     }
 
-    // Start the game by creating an SOSBoard and SOSGameGUI
-    public void startGame() {
-        SOSBoard board = new SOSBoard(boardSize, gameType);
-        new SOSGameGUI(board);  // Start the game GUI
+
+     // Start the game by creating an SOSBoard and SOSGameGUI returns game mode instance
+     public void startGame() {
+        SOSBoard game;
+        if (gameType.equals("Simple Game")) {
+            game = new SOSGameSimple(boardSize);
+        } else {
+            //Return an instance of SOSGameGeneral when General mode is implemented
+            game = new SOSGameGeneral(boardSize);  //Placeholder for General Game implemation
+        }
+        new SOSGameGUI(game); //Passes the game instance to the GUI
     }
 }
+

@@ -1,84 +1,69 @@
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-// Unit testing for game play GUI Using both JUnit(limited for testing GUIs) and AssertJ-swing libraries
 public class SOSGameGUITest {
 
     private SOSGameGUI gameGUI;
-    private SOSBoard board;
+    private SOSGameSimple board;
 
     @Before
     public void setUp() {
-        // Initialize a 3x3 board for testing
-        board = new SOSBoard(3, "Simple");
+        // Initialize the board and GUI for the "Simple" game mode
+        board = new SOSGameSimple(3);
         gameGUI = new SOSGameGUI(board);
     }
 
     @Test
-    public void testInitialSetup() {
-        // Verify that the title is correctly set
+    public void testGUIInitialization() {
+        // Verify the frame title
         assertEquals("SOS Game", gameGUI.getTitle());
 
-        // Verify the board size label
-        JLabel boardSizeLabel = findLabel(gameGUI, "Board Size: 3");
-        assertNotNull(boardSizeLabel);
+        // Verify the board size
+        assertEquals(3, board.getSize());
+        
+        // Check that the game board is populated with buttons
+        JButton[][] buttons = gameGUI.getButtons();
+        assertEquals(3, buttons.length);
+        assertEquals(3, buttons[0].length);
 
-        // Verify the buttons are initialized correctly
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                JButton button = gameGUI.getButtonAt(i, j);
-                assertNotNull(button);
-                assertEquals("", button.getText());
+        // Verify each button in the grid is initially empty
+        for (int i = 0; i < buttons.length; i++) {
+            for (int j = 0; j < buttons[i].length; j++) {
+                assertEquals("", buttons[i][j].getText());
             }
         }
     }
 
     @Test
-    public void testButtonClick() {
-        // Simulate a click on the first button (0,0)
-        JButton button = gameGUI.getButtonAt(0, 0);
-        assertNotNull(button);
-
-        // Simulate a click on the button
-        button.doClick();
-
-        // Verify the button text has changed to the selected move, which is "S" by default
-        assertEquals("S", button.getText());
+    public void testPlayerMoveUpdatesBoard() {
+        // Simulate a player move in cell (0, 0)
+        JButton[][] buttons = gameGUI.getButtons();
+        JButton cellButton = buttons[0][0];
+        cellButton.doClick();  // Simulates a button click
+        
+        // Verify the cell is updated with the current player's move ("S")
+        assertEquals("S", cellButton.getText());
+        
+        // Verify that the board model is also updated
+        assertEquals("S", board.getCellValue(0, 0));
     }
 
     @Test
-    public void testPlayerTurnLabel() {
-        // Initially, the turn label should indicate it's Blue's turn
-        JLabel playerTurnLabel = findLabel(gameGUI, "Player Turn: Blue");
-        assertNotNull(playerTurnLabel);
+    public void testPlayerTurnLabelUpdates() {
+        // Initially, the player turn label should show "Blue"
+        JLabel playerTurnLabel = gameGUI.getPlayerTurnLabel();
+        assertEquals("Player Turn: Blue", playerTurnLabel.getText());
+        
+        // Simulate a move and verify that the player turn label updates
+        gameGUI.getButtons()[0][0].doClick();  // Blue plays
+        assertEquals("Player Turn: Red", playerTurnLabel.getText());
 
-        // Simulate a move to toggle the turn
-        JButton button = gameGUI.getButtonAt(0, 0);
-        button.doClick();  // First move by Blue (default)
-
-        // Verify the turn label has updated for the next player's turn (Red)
-        playerTurnLabel = findLabel(gameGUI, "Player Turn: Red");
-        assertNotNull(playerTurnLabel);
+        gameGUI.getButtons()[0][1].doClick();  // Red plays
+        assertEquals("Player Turn: Blue", playerTurnLabel.getText());
     }
-
-    // Utility method to find a JLabel by text in a container (if not directly accessible)
-    private JLabel findLabel(Container container, String text) {
-        for (Component component : container.getComponents()) {
-            if (component instanceof JLabel) {
-                JLabel label = (JLabel) component;
-                if (label.getText().equals(text)) {
-                    return label;
-                }
-            } else if (component instanceof Container) {
-                JLabel label = findLabel((Container) component, text);
-                if (label != null) {
-                    return label;
-                }
-            }
-        }
-        return null;
-    }
+ 
 }

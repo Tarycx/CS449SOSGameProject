@@ -4,11 +4,12 @@ import static org.junit.Assert.*;
 
 public class SOSBoardTest {
 
-    private SOSBoard board;
+    private SOSGameSimple board;  // Updated to reflect the use of SOSGameSimple
 
     @Before
     public void setUp() {
-        board = new SOSBoard(3, "Simple");  // Initialize a 3x3 board with "Simple" mode
+        // Initialize a 3x3 board with "Simple" mode
+        board = new SOSGameSimple(3);
     }
 
     @Test
@@ -16,7 +17,7 @@ public class SOSBoardTest {
         assertEquals(3, board.getSize());  // Verify the size of the board is correct
         for (int i = 0; i < board.getSize(); i++) {
             for (int j = 0; j < board.getSize(); j++) {
-                assertNull(board.getCellValue(i, j));  // Ensure all cells are empty (null) at the start
+                assertEquals("", board.getCellValue(i, j));  // Ensure all cells are empty (empty string) at the start
             }
         }
     }
@@ -54,12 +55,20 @@ public class SOSBoardTest {
 
     @Test
     public void testGetGameMode() {
-        assertEquals("Simple", board.getGameMode());  // Check the game mode is set correctly
+        assertEquals("Simple", board.getGameType());  // Check the game type is correctly set to Simple
     }
 
     @Test
-    public void testGameWonPlaceholder() {
-        // Since the win logic is a placeholder, test that isGameWon() returns false by default
-        assertFalse(board.isGameWon());  // Placeholder should return false
+    public void testWinConditionOnFirstSOS() {
+        // Create an SOS sequence to test win detection
+        board.makeMove(0, 0, "S");
+        board.makeMove(0, 1, "O");
+        boolean isGameWon = board.makeMove(0, 2, "S");
+
+        // Verify that the game correctly detects the win
+        assertTrue(isGameWon);
+        assertEquals("Blue wins!", board.getWinner());  // Assuming Blue made the winning move
     }
+
+
 }
