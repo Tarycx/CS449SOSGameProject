@@ -67,7 +67,7 @@ public class SOSBoardTest {
 
         // Verify that the game correctly detects the win
         assertTrue(isGameWon);
-        assertEquals("Blue wins!", board.getWinner());  // Assuming Blue made the winning move
+        assertEquals("Blue Wins!", board.getWinner());  // Assuming Blue made the winning move
     }
 
 

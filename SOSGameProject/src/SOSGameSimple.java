@@ -10,6 +10,7 @@ public class SOSGameSimple extends SOSBoard {
         super(size);
     }
 
+    //For checking Game Type
     @Override
     public String getGameType() {
         return "Simple";

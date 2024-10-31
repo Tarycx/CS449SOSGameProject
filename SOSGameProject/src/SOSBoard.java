@@ -2,33 +2,34 @@
 import java.util.ArrayList;
 import java.util.List;
 
-//Represents the board, holds the board state, and provides game logic (checking for wins).
+//FixMe: (Future Restructuring) Seperate Board from Class Game Type Logic? And Class Player Type Logic
+//Represents the board, holds the board state, and provides game logic (checking for wins). And Game Type Logic
 public abstract class SOSBoard {
-    protected int size;
-    protected String[][] board;
-    protected String currentPlayer;      // "S" or "O"
-    protected String currentPlayerColor; // "Blue" or "Red" to represent the player
+    protected int size; // Board size value int (3-10)
+    protected String[][] board; // (2 < int < 11) 
+    protected String currentPlayerLetter;      //"S" or "O"
+    protected String currentPlayerColor; // "Blue" or "Red" representing the player
 
-    // New field to store completed SOS sequences
+    //container to store completed SOS sequences
     protected List<CompletedSOS> completedSOSSequences = new ArrayList<>(); //Line 
 
-    // Inner class to store an SOS sequence
-    protected static class CompletedSOS {
-        int startX, startY, endX, endY;
+    //Inner class storing SOS Sequence data for line plotting starting at (x1, y1) going to and ending with (x2, y2)
+    protected static class CompletedSOS { 
+        int x1, y1, x2, y2;
         String color;
 
-        public CompletedSOS(int startX, int startY, int endX, int endY, String color) {
-            this.startX = startX;
-            this.startY = startY;
-            this.endX = endX;
-            this.endY = endY;
+        public CompletedSOS(int x1, int y1, int x2, int y2, String color) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
             this.color = color;
         }
     }
 
     // New method to add completed SOS
-    protected void addCompletedSOS(int startX, int startY, int endX, int endY) {
-        completedSOSSequences.add(new CompletedSOS(startX, startY, endX, endY, currentPlayerColor));
+    protected void addCompletedSOS(int x1, int y1, int x2, int y2) {
+        completedSOSSequences.add(new CompletedSOS(x1, y1, x2, y2, currentPlayerColor));
     }
 
     //remove any previously stored sequences so no lines are drawn when the board is reset
@@ -49,7 +50,7 @@ public abstract class SOSBoard {
                 board[i][j] = ""; //each cell set to an empty string
             }
         }
-        this.currentPlayer = "S";      // Start with player "S"
+        this.currentPlayerLetter = "S";      // Start with player "S"
         this.currentPlayerColor = "Blue";  // Player 1 starts with Blue
         //this.gameMode = gameMode;      // Store selected game mode 
     }
@@ -74,7 +75,7 @@ public abstract class SOSBoard {
     }
 
     public String getCurrentPlayer() {
-        return currentPlayer;
+        return currentPlayerLetter;
     }
 
     public String getCurrentPlayerColor() {
@@ -84,16 +85,16 @@ public abstract class SOSBoard {
 
     public void togglePlayer() { //Updated using Color over letter condition
         if (currentPlayerColor.equals("Blue")) {
-            currentPlayer = "O";  // Toggle to "O"
+            currentPlayerLetter = "O";  // Toggle to "O"
             currentPlayerColor = "Red";  // Player 2 is Red
         } 
         else {
-            currentPlayer = "S";  // Toggle to "S"
+            currentPlayerLetter = "S";  // Toggle to "S"
             currentPlayerColor = "Blue"; // Player 1 is Blue
         }
     }
 
-    public boolean isCellEmpty(int row, int col) { //Function is working
+    public boolean isCellEmpty(int row, int col) { //Note: Function is working
         //return board[row][col] == null || board[row][col].isEmpty();
         boolean empty = board[row][col] == null || board[row][col].isEmpty();
         System.out.println("Checking if cell (" + row + ", " + col + ") is empty: " + empty); //Testing
@@ -113,6 +114,7 @@ public abstract class SOSBoard {
         return true;
     }
 
+    //Win condtition logic for Simple and General game
     protected abstract boolean checkWinCond();
 
 
@@ -188,21 +190,15 @@ public abstract class SOSBoard {
         return false;
     }
 
-
     public String getWinner() {// deafult used by Simple Game
-        return getCurrentPlayerColor() + " wins!";
+        return getCurrentPlayerColor() + " Wins!";
     }
-
-
-
-
 
     public void resetPlayerScores() {
         // For General Game reset
     }
 
-     // Helper to reset countedCells for a new game
-
+     //reset countedCells for a new game
      public void resetSOSCellTrackers() {
         // For General Game reset
      }
@@ -212,8 +208,8 @@ public abstract class SOSBoard {
 
      }
 
-    // sequence object to hold information about each completed SOS sequence
-    //Update for line
+    // Sequence object to hold information about each completed SOS sequence data
+  
      public class SOSSequence {
         public int row, col;
         public String direction;

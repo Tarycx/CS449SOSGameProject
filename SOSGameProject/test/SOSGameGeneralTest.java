@@ -164,7 +164,7 @@ public class SOSGameGeneralTest {
 
         // Assert: Game should end, and Blue should be the winner with 2 points
         assertTrue(!isGameOver);
-        assertEquals(" Blue Wins! Score: 2", winner);
+        assertEquals(" Blue Wins! Blue Score: 2 | Red Score: 1", winner);
     }
 
     @Test
@@ -187,7 +187,7 @@ public class SOSGameGeneralTest {
 
         // Assert: Game should end, and Red should be the winner with a higher score: 2
         assertTrue(isGameOver);
-        assertEquals(" Red Wins! Score: 2", winner);
+        assertEquals(" Red Wins! Red Score: 2 | Blue Score: 1", winner);
     }
 
     @Test

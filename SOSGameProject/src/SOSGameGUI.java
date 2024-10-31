@@ -1,7 +1,7 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 // Main GUI for the game.
 public class SOSGameGUI extends JFrame {
@@ -37,16 +37,16 @@ public class SOSGameGUI extends JFrame {
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(600, 600));
 
-        // Panel for move selection, board size, and player turn display
+        //Panel for move selection, board size, and player turn display
         JPanel moveSelectionPanel = createMoveSelectionPanel();
-        add(moveSelectionPanel, BorderLayout.NORTH); // Place move selection panel at the top
+        add(moveSelectionPanel, BorderLayout.NORTH); //Place move selection panel at the top
 
         // Initialize board panel and add to lower layer
         JPanel gameBoardPanel = initializeBoard();
         gameBoardPanel.setBounds(0, 0, 500, 500);
         layeredPane.add(gameBoardPanel, JLayeredPane.DEFAULT_LAYER);
 
-        // Transparent panel for drawing SOS lines, added above button layer
+        //Transparent panel for drawing SOS lines, added above button layer
         JPanel linePanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -54,7 +54,7 @@ public class SOSGameGUI extends JFrame {
                 drawSOSLines((Graphics2D) g); // Draw SOS lines on this layer
             }
         };
-        linePanel.setOpaque(false); // Make the line panel transparent
+        linePanel.setOpaque(false); //Make the line panel transparent
         linePanel.setBounds(0, 0, 600, 600);
         layeredPane.add(linePanel, JLayeredPane.PALETTE_LAYER);
 
@@ -105,7 +105,7 @@ public class SOSGameGUI extends JFrame {
         return panel;
     }
 
-    // Initializes the game board with buttons
+    //Initializes the game board with buttons
     private JPanel initializeBoard() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(board.getSize(), board.getSize()));
@@ -136,14 +136,16 @@ public class SOSGameGUI extends JFrame {
                 g2d.setColor(Color.RED);
             }
 
-            // Calculate pixel coordinates based on button positions
-            int startX = buttons[sos.startX][sos.startY].getX() + buttons[sos.startX][sos.startY].getWidth() / 2;
-            int startY = buttons[sos.startX][sos.startY].getY() + buttons[sos.startX][sos.startY].getHeight() / 2;
-            int endX = buttons[sos.endX][sos.endY].getX() + buttons[sos.endX][sos.endY].getWidth() / 2;
-            int endY = buttons[sos.endX][sos.endY].getY() + buttons[sos.endX][sos.endY].getHeight() / 2;
-
-            // Draw the line from start to end point
-            g2d.drawLine(startX, startY, endX, endY);
+            //Calculate pixel coordinates based on button positions (for interations to update all lines on UI)
+            
+            int x1 = buttons[sos.x1][sos.y1].getX() + buttons[sos.x1][sos.y1].getWidth() / 2;
+            int y1 = buttons[sos.x1][sos.y1].getY() + buttons[sos.x1][sos.y1].getHeight() / 2;
+            int x2 = buttons[sos.x2][sos.y2].getX() + buttons[sos.x2][sos.y2].getWidth() / 2;
+            int y2 = buttons[sos.x2][sos.y2].getY() + buttons[sos.x2][sos.y2].getHeight() / 2;
+            
+            //Draw the line from start to end point (x1, y1) : Starting Position, (x2, y2) : Ending Position
+            g2d.drawLine(x1, y1, x2, y2);
+            
         }
     }
 

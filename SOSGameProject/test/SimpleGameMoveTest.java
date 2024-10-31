@@ -102,7 +102,7 @@ public class SimpleGameMoveTest {
 
         // Assert: Game should end, and Blue should be the winner
         assertTrue(gameEnded);
-        assertEquals("Blue wins!", winner);
+        assertEquals("Blue Wins!", winner);
     }
 
     @Test
