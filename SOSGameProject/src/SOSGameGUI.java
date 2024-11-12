@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
+
 // Main GUI for the game.
 public class SOSGameGUI extends JFrame {
     private SOSBoard board; // Reference to Board and game mode (Simple/General)
@@ -61,6 +62,10 @@ public class SOSGameGUI extends JFrame {
         add(layeredPane, BorderLayout.CENTER); // Add layeredPane to the main frame
         setLocationRelativeTo(null); // Center the window
         setVisible(true);
+
+
+        //Strat the first turn  
+        cpuTurn();
     }
 
     // Panel for move selection and game controls
@@ -113,7 +118,8 @@ public class SOSGameGUI extends JFrame {
         for (int i = 0; i < board.getSize(); i++) {
             for (int j = 0; j < board.getSize(); j++) {
                 buttons[i][j] = new JButton();
-                buttons[i][j].setFont(new Font("Arial", Font.PLAIN, 24));
+                int fontSize = Math.max(10, 200 / board.getSize()); // Dynamic font size based on board size
+                buttons[i][j].setFont(new Font("Arial", Font.PLAIN, fontSize));
                 buttons[i][j].setOpaque(false); // Make buttons transparent
                 buttons[i][j].setContentAreaFilled(false);
                 buttons[i][j].setBorderPainted(true);
@@ -128,6 +134,7 @@ public class SOSGameGUI extends JFrame {
 
     //Draw SOS lines on the overlay panel
     private void drawSOSLines(Graphics2D g2d) {
+        g2d.setStroke(new BasicStroke(3)); // Adjust the thickness as needed
         for (SOSBoard.CompletedSOS sos : board.completedSOSSequences) {
             // Set color based on the player who completed the SOS
             if ("Blue".equals(sos.color)) {
@@ -159,43 +166,80 @@ public class SOSGameGUI extends JFrame {
             this.col = col;
         }
 
+        
+
+        //UPDATE: Sprint4
         @Override
         public void actionPerformed(ActionEvent e) {
-            JButton clickedButton = buttons[row][col];
-
-            // Check if the cell is empty
-            if (board.isCellEmpty(row, col)) {
-                // Set the text color based on the current player
-                if (board.getCurrentPlayerColor().equals("Blue")) {
-                    clickedButton.setForeground(Color.BLUE);
-                } else {
-                    clickedButton.setForeground(Color.RED);
-                }
-
-                // Set the button text with the selected move
-                clickedButton.setText(selectedMove);
-                clickedButton.setOpaque(true);
-
-                // Check if a winning move was made
-                boolean move = board.makeMove(row, col, selectedMove);
-                repaint(); // Repaint to draw lines
-
-                if (move) {
-                    JOptionPane.showMessageDialog(null, board.getWinner());
-                    resetBoard();
-                } else if (board.isBoardFull()) {
-                    JOptionPane.showMessageDialog(null, "The game is a draw!");
-                    resetBoard();
-                } else {
-                    updatePlayerTurnLabel();
-                }
+            if (board.getCurrentPlayer() instanceof Human && board.isCellEmpty(row, col)) {
+                playerTurn(row, col);
+                cpuTurn();  // Proceed to the next turn after human move
             }
         }
     }
 
-    // Updates player turn label with color
+    //UPDATE: Sprint4
+    // Handles a move for the current player
+    private void playerTurn(int row, int col) {
+        buttons[row][col].setText(selectedMove);
+        buttons[row][col].setForeground("Blue".equals(board.getCurrentPlayer().getColor()) ? Color.BLUE : Color.RED);
+        board.makeMove(row, col, selectedMove);
+        repaint();
+
+        if (board.checkWinCond()) {
+            JOptionPane.showMessageDialog(this, board.getWinner());
+            resetBoard();
+        } else if (board.isBoardFull()) {
+            JOptionPane.showMessageDialog(this, "The game is a draw!");
+            resetBoard();
+        }
+    }
+
+    //UPDATE: Sprint4
+    //current player turn, auto-playing if it's a CPU
+     private void cpuTurn() {
+        updatePlayerTurnLabel();
+        
+        if (board.getCurrentPlayer() instanceof CPU) {
+             // Create a 1-second delay for the CPU move
+             // Pause the program for 1 second before the CPU makes a move
+           
+            // Perform the CPU's move
+            CPU cpuPlayer = (CPU) board.getCurrentPlayer();  // Cast to CPU safely
+            String cpuColor = cpuPlayer.getColor(); // 
+            cpuPlayer.playerMakeMove(board);  // Make the move on the board
+            int row = cpuPlayer.getRow();
+            int col = cpuPlayer.getCol();
+            String cpuSelectedMove = cpuPlayer.getMoveCPU();
+
+            buttons[row][col].setText(cpuSelectedMove);  // Display CPU move
+            buttons[row][col].setForeground("Blue".equals(cpuColor) ? Color.BLUE : Color.RED);//Fix Color GUI Coloring Errors
+            repaint();
+
+            if (board.checkWinCond()) {
+                JOptionPane.showMessageDialog(this, board.getWinner());
+                resetBoard();
+            } else if (board.isBoardFull()) {
+                JOptionPane.showMessageDialog(this, "The game is a draw!");
+                resetBoard();
+            } else {
+                // Toggle to the next player
+                //board.togglePlayer();
+                updatePlayerTurnLabel();
+                // Only call handleTurn again if the next player is also a CPU
+                if (board.getCurrentPlayer() instanceof CPU) {
+                    cpuTurn();  // Recursive call for consecutive CPU turns in CPU vs CPU mode
+                }
+                //If next player is Human, handleTurn ends, allowing human to take turn
+            }
+
+
+        }
+    }
+
+    // Update player turn label with color
     private void updatePlayerTurnLabel() {
-        if (board.getCurrentPlayerColor().equals("Blue")) {
+        if ("Blue".equals(board.getCurrentPlayer().getColor())) {
             playerTurnLabel.setText("Player Turn: Blue");
             playerTurnLabel.setForeground(Color.BLUE);
         } else {
@@ -217,7 +261,25 @@ public class SOSGameGUI extends JFrame {
                 buttons[i][j].setBackground(null);
             }
         }
+
+        //CASE: Both Players are CPU
+        if(board.bothPlayersAreCPU()) {
+            // Close the current game window
+            dispose();
+
+            // Launch the main menu
+            SwingUtilities.invokeLater(() -> {
+                GameMenu controller = new GameMenu(); // Create new game controller
+                new GameMenuGUI(controller); // Open game setup menu
+            });
+        }
+        else {
+        cpuTurn();
         updatePlayerTurnLabel();
+
+        }
+        
+
     }
 
     

@@ -10,7 +10,7 @@ public class GeneralGameMoveTest {
     @Before
     public void setUp() {
         // Initialize a 3x3 board for the test, in "General" game mode
-        board = new SOSGameGeneral(3);
+        board = new SOSGameGeneral(3, "Human", "Human");
     }
 
     // 6.1 player makes a move on an empty space

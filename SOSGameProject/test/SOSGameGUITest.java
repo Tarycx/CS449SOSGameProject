@@ -13,7 +13,7 @@ public class SOSGameGUITest {
     @Before
     public void setUp() {
         // Initialize the board and GUI for the "Simple" game mode
-        board = new SOSGameSimple(3);
+        board  = new SOSGameSimple(3, "Human", "Human");
         gameGUI = new SOSGameGUI(board);
     }
 

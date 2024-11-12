@@ -19,8 +19,8 @@ public class SOSGameGeneral extends SOSBoard{
     public boolean[][] leftDiagonalCompletedSOSTracker;
     public boolean[][] rightDiagonalCompletedSOSTracker;
 
-    public SOSGameGeneral(int size) {
-        super(size); //Calls constructor of superclass SOSBaord
+    public SOSGameGeneral(int size, String bluePlayerType, String redPlayerType) {
+        super(size, bluePlayerType, redPlayerType); //Calls constructor of superclass SOSBaord
         //completeSOSCellTracker = new boolean[size][size];
         horizontalCompletedSOSTracker = new boolean[size][size];
         verticalCompletedSOSTracker = new boolean[size][size];
@@ -174,7 +174,7 @@ public class SOSGameGeneral extends SOSBoard{
     }
 
     public void setPlayerScore() {
-        if (currentPlayerColor.equals("Blue")) {
+        if (currentPlayer.getColor().equals("Blue")) {
             blueScore++;  // Update Blue player's score
             System.out.println("Test: Checking blueScore: " + blueScore); //Testing
 

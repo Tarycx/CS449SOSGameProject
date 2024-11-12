@@ -10,7 +10,8 @@ public class SimpleGameMoveTest {
     @Before
     public void setUp() {
         // Initialize a 3x3 board for the test, in "Simple" game mode
-        board = new SOSGameSimple(3);
+        board = new SOSGameSimple(3, "Human", "Human");
+
     }
 
     // 4.1 Player makes a move on an empty space

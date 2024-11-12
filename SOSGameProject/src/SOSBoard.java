@@ -5,13 +5,16 @@ import java.util.List;
 //FixMe: (Future Restructuring) Seperate Board from Class Game Type Logic? And Class Player Type Logic
 //Represents the board, holds the board state, and provides game logic (checking for wins). And Game Type Logic
 public abstract class SOSBoard {
+
     protected int size; // Board size value int (3-10)
     protected String[][] board; // (2 < int < 11) 
-    protected String currentPlayerLetter;      //"S" or "O"
-    protected String currentPlayerColor; // "Blue" or "Red" representing the player
-
+    // Update: Player Class implementaions
+    protected Player bluePlayer;
+    protected Player redPlayer;
+    protected Player currentPlayer;
     //container to store completed SOS sequences
     protected List<CompletedSOS> completedSOSSequences = new ArrayList<>(); //Line 
+
 
     //Inner class storing SOS Sequence data for line plotting starting at (x1, y1) going to and ending with (x2, y2)
     protected static class CompletedSOS { 
@@ -29,7 +32,7 @@ public abstract class SOSBoard {
 
     // New method to add completed SOS
     protected void addCompletedSOS(int x1, int y1, int x2, int y2) {
-        completedSOSSequences.add(new CompletedSOS(x1, y1, x2, y2, currentPlayerColor));
+        completedSOSSequences.add(new CompletedSOS(x1, y1, x2, y2, currentPlayer.getColor()));
     }
 
     //remove any previously stored sequences so no lines are drawn when the board is reset
@@ -39,23 +42,46 @@ public abstract class SOSBoard {
 
 
 
-
-
-    public SOSBoard(int size) { // Update: SOSBoard parmeters changed with removal of gameType
+    public SOSBoard(int size, String bluePlayerType, String redPlayerType) { // Update: SOSBoard parmeters changed with removal of gameType
         this.size = size;
         this.board = new String[size][size];
+
+        initializePlayers(bluePlayerType, redPlayerType);// sets player types
+        //resetBoard(); 
+
         //Initialize each cell to null or empty string
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 board[i][j] = ""; //each cell set to an empty string
             }
         }
-        this.currentPlayerLetter = "S";      // Start with player "S"
-        this.currentPlayerColor = "Blue";  // Player 1 starts with Blue
-        //this.gameMode = gameMode;      // Store selected game mode 
+        
+       
     }
 
-    public int getSize() {
+    //UPDATE: Sprint4 Initialize players based on type (Human or CPU) Connects Menu Data on Player types to board and Player Clases
+    private void initializePlayers(String bluePlayerType, String redPlayerType) {
+        bluePlayer = bluePlayerType.equals("CPU") ? new CPU("Blue") : new Human("Blue");
+        redPlayer = redPlayerType.equals("CPU") ? new CPU("Red") : new Human("Red");
+        currentPlayer = bluePlayer;
+    }
+
+    //CASE: Both Players are CPUs break infinit looping
+    public boolean bothPlayersAreCPU() {
+        return (bluePlayer instanceof CPU && redPlayer instanceof CPU);
+    }
+
+    //UPDATE: Sprint4 Toggle between players
+    public void togglePlayer() {
+        currentPlayer = (currentPlayer == bluePlayer) ? redPlayer : bluePlayer;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+
+    public int getSize() {//Getter for testing
         return size;
     }
 
@@ -74,25 +100,12 @@ public abstract class SOSBoard {
         board[row][col] = value;
     }
 
-    public String getCurrentPlayer() {
-        return currentPlayerLetter;
-    }
 
     public String getCurrentPlayerColor() {
-        return currentPlayerColor;
+        return currentPlayer.getColor();
     }
 
 
-    public void togglePlayer() { //Updated using Color over letter condition
-        if (currentPlayerColor.equals("Blue")) {
-            currentPlayerLetter = "O";  // Toggle to "O"
-            currentPlayerColor = "Red";  // Player 2 is Red
-        } 
-        else {
-            currentPlayerLetter = "S";  // Toggle to "S"
-            currentPlayerColor = "Blue"; // Player 1 is Blue
-        }
-    }
 
     public boolean isCellEmpty(int row, int col) { //Note: Function is working
         //return board[row][col] == null || board[row][col].isEmpty();
@@ -122,14 +135,14 @@ public abstract class SOSBoard {
     public boolean makeMove(int row, int col, String value) {
         if (isCellEmpty(row, col)) {//Testing: it never passes
             setCellValue(row, col, value);
-            System.out.println("Testing Output: True isCellEmpty, SOSBoard");//Testing
+            //System.out.println("Testing Output: True isCellEmpty, SOSBoard");//Testing
 
             if (checkWinCond()) {
-                System.out.println("Testing Output: TrueCheckWIncondition, SOSBoard");//Tesing
+                //System.out.println("Testing Output: TrueCheckWIncondition, SOSBoard");//Tesing
 
                 return true;  // Game ends if win condition is met
             }
-            togglePlayer();  // Change player after move if no win
+            togglePlayer();  // Change Player after move if no win
         }
 
     return false;

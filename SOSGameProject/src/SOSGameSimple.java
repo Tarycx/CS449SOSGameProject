@@ -6,8 +6,8 @@ players after each move. */
 //child class of SOSBoard
 public class SOSGameSimple extends SOSBoard {
 
-    public SOSGameSimple(int size) {
-        super(size);
+    public SOSGameSimple(int size, String bluePlayerType, String redPlayerType) {
+        super(size, bluePlayerType, redPlayerType);
     }
 
     //For checking Game Type
@@ -36,7 +36,7 @@ public class SOSGameSimple extends SOSBoard {
     @Override //Update to protected 
     public boolean makeMove(int row, int col, String value) {
         if (super.makeMove(row, col, value)) {
-            System.out.println("Game over! Winner: " + getCurrentPlayerColor());
+            System.out.println("Game over! Winner: " + currentPlayer.getColor());
             return true;  // End game after winning move
         }
         
@@ -100,6 +100,7 @@ public class SOSGameSimple extends SOSBoard {
                 return true;
             }
         }
+       
         return false;
     }
 

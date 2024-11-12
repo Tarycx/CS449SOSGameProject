@@ -9,7 +9,7 @@ public class SOSGameSimpleTest {
     @Before
     public void setUp() {
         // Initialize a 3x3 Simple game board
-        game = new SOSGameSimple(3);
+        game = new SOSGameSimple(3, "Human", "Human");
     }
 
     @Test

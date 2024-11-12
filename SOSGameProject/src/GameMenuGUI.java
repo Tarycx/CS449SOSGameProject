@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 public class GameMenuGUI extends JFrame {
     private JComboBox<String> gameTypeComboBox;
     private JSpinner boardSizeSpinner;
+    private JComboBox<String> bluePlayerTypeComboBox;// Player type selection
+    private JComboBox<String> redPlayerTypeComboBox;// player type selection
     private JButton startButton;
     private JButton cancelButton;
 
@@ -18,13 +20,13 @@ public class GameMenuGUI extends JFrame {
 
         // Set up the frame
         setTitle("SOS Game Setup");
-        setSize(400, 200);
+        setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Create panel for game settings
         JPanel settingsPanel = new JPanel();
-        settingsPanel.setLayout(new GridLayout(2, 2));
+        settingsPanel.setLayout(new GridLayout(4, 2));
 
         // Game type selection
         JLabel gameTypeLabel = new JLabel("Select Game Type:");
@@ -45,12 +47,26 @@ public class GameMenuGUI extends JFrame {
             textField.setHorizontalAlignment(JTextField.CENTER);  // Center the value in the input box
         }
 
+        //Player type selection
+        JLabel bluePlayerLabel = new JLabel("Blue Player Type:");
+        String[] playerTypes = {"Human", "CPU"};
+        bluePlayerTypeComboBox = new JComboBox<>(playerTypes);
+        bluePlayerTypeComboBox.addActionListener(e -> controller.setBluePlayerType((String) bluePlayerTypeComboBox.getSelectedItem()));
+
+        JLabel redPlayerLabel = new JLabel("Red Player Type:");
+        redPlayerTypeComboBox = new JComboBox<>(playerTypes);
+        redPlayerTypeComboBox.addActionListener(e -> controller.setRedPlayerType((String) redPlayerTypeComboBox.getSelectedItem()));
+
 
         // Add components to settings panel
         settingsPanel.add(gameTypeLabel);
         settingsPanel.add(gameTypeComboBox);
         settingsPanel.add(boardSizeLabel);
         settingsPanel.add(boardSizeSpinner);
+        settingsPanel.add(bluePlayerLabel);
+        settingsPanel.add(bluePlayerTypeComboBox);
+        settingsPanel.add(redPlayerLabel);
+        settingsPanel.add(redPlayerTypeComboBox);
 
         // Create panel for buttons
         JPanel buttonPanel = new JPanel();
